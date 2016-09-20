@@ -22,6 +22,8 @@ import org.alfresco.maven.plugin.config.TomcatDependency;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -72,7 +74,7 @@ public class RunMojo extends AbstractMojo {
     protected MavenSession session;
 
     @Component
-    private BuildPluginManager pluginManager;
+    protected BuildPluginManager pluginManager;
 
     /**
      * The following properties that start with 'maven.' are used to control the
@@ -249,7 +251,7 @@ public class RunMojo extends AbstractMojo {
     /**
      * The Maven environment that this mojo is executed in
      */
-    private ExecutionEnvironment execEnv;
+    protected ExecutionEnvironment execEnv;
 
     public void execute() throws MojoExecutionException {
         execEnv = executionEnvironment(
@@ -280,7 +282,7 @@ public class RunMojo extends AbstractMojo {
 
         if (startTomcat) {
             checkDatabaseConfig();
-            startTomcat();
+            startTomcat(true);
         }
     }
 
@@ -766,7 +768,7 @@ public class RunMojo extends AbstractMojo {
     /**
      * Check that a database configuration has been supplied correctly
      */
-    private void checkDatabaseConfig() throws MojoExecutionException {
+    protected void checkDatabaseConfig() throws MojoExecutionException {
         if (enableH2 && !enableMySQL && !enablePostgreSQL) {
             // Run with the H2 database
             return;
@@ -793,7 +795,7 @@ public class RunMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException
      */
-    protected void startTomcat() throws MojoExecutionException {
+    protected void startTomcat(boolean start) throws MojoExecutionException {
         getLog().info("Starting Tomcat");
 
         List<Dependency> tomcatPluginDependencies = new ArrayList<Dependency>();
@@ -861,15 +863,33 @@ public class RunMojo extends AbstractMojo {
         Element[] webapps = new Element[webapps2Deploy.size()];
         webapps2Deploy.toArray(webapps);
 
-        executeMojo(
-                plugin(
-                        groupId("org.apache.tomcat.maven"),
-                        artifactId("tomcat7-maven-plugin"),
-                        version(MAVEN_TOMCAT7_PLUGIN_VERSION),
-                        tomcatPluginDependencies
-                ),
-                goal("run"),
+        Plugin tomcatPlugin = plugin(
+                groupId("org.apache.tomcat.maven"),
+                artifactId("tomcat7-maven-plugin"),
+                version(MAVEN_TOMCAT7_PLUGIN_VERSION),
+                tomcatPluginDependencies
+        );
+
+        if (start) {
+            PluginExecution startExecution = new PluginExecution();
+            startExecution.setId("start-tomcat");
+            startExecution.addGoal("run");
+            startExecution.setPhase("pre-integration-test");
+            startExecution.setConfiguration(configuration(
+                    element(name("fork"), "true")));
+            tomcatPlugin.addExecution(startExecution);
+        } else {
+            PluginExecution stopExecution = new PluginExecution();
+            stopExecution.setId("stop-tomcat");
+            stopExecution.addGoal("shutdown");
+            stopExecution.setPhase("post-integration-test");
+            tomcatPlugin.addExecution(stopExecution);
+        }
+
+        executeMojo(tomcatPlugin,
+                goal(start? "run" : "shutdown") ,
                 configuration(
+                        element(name("fork"), "true"),
                         /*
                          * SDK Projects doesn't have packaging set to 'war', they are JARs or POMs,
                          * this setting ignores that fact.

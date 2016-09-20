@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
+    Copyright (C) 2016 Alfresco Software Limited.
+
+    This file is part of the Alfresco SDK Samples project.
+
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements. 
     The ASF licenses this file to You under the Apache License, Version 2.0
@@ -18,12 +22,11 @@
 <!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
 
 <beans>
-     
-    <bean id="remoteRunnnerWrapper" class="org.alfresco.maven.rad.RemoteRunnerWrapper"/>
-    
-    <bean id="remoteRunnnerWrapperThread" class="java.lang.Thread" init-method="start" destroy-method="interrupt">
-        <constructor-arg ref="remoteRunnnerWrapper"/>
-    </bean>
 
+    <!-- Integration testing framework donated by Zia Consulting -->
+    <bean id="webscript.org.alfresco.maven.rad.testframework.runtest.get"
+          class="org.alfresco.maven.rad.testframework.RunTestWebScript"
+          parent="webscript">
+    </bean>
 
 </beans>
