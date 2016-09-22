@@ -58,13 +58,31 @@
         <!-- Compile with Java 7, default is 5 -->
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+
+        <!-- Testing Tool versions -->
+        <maven.surefire.version>2.19.1</maven.surefire.version>
     </properties>
 
     <dependencies>
+        <!-- All Unit and Integration Tests are run by JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Alfresco Test Framework for rapid application development -->
+        <dependency>
+            <groupId>org.alfresco.maven</groupId>
+            <artifactId>alfresco-rad</artifactId>
+            <version>${alfresco.sdk.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Dependencies that tests have in the platform module, needed here to be able to run the tests
+             when they are copied to parent target/test-classes -->
+        <dependency>
+            <groupId>${alfresco.groupId}</groupId>
+            <artifactId>alfresco-repository</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -128,6 +146,25 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!-- Run all Unit tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${maven.surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <includes>
+                            <include>**/*Test.class</include>
+                        </includes>
+                    </configuration>
+                </plugin>
+
                 <!-- Build an AMP if 3rd party libs are needed by the extensions -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

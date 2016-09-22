@@ -134,16 +134,19 @@ public class IntegrationTestMojo extends AbstractRunMojo {
                 version("2.19.1"),
                 failsafePluginDependencies
         );
+        getLog().info("Executing failsafe Mojo...");
 
         executeMojo(failsafePlugin,
                 goal("integration-test"),
                 configuration(
                         element(name("includes"),
-                                element(name("include"), "**/IT*.class")
+                                element(name("include"), "**/*IT.class")
                         )
                 ),
                 execEnv
         );
+
+        getLog().info("Executed failsafe Mojo");
     }
 
     protected void stopTomcat() throws MojoExecutionException {

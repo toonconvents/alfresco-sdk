@@ -1,6 +1,6 @@
 #set($symbol_pound='#')
-        #set($symbol_dollar='$')
-        #set($symbol_escape='\' )
+#set($symbol_dollar='$')
+#set($symbol_escape='\' )
 /**
  * Copyright (C) 2016 Alfresco Software Limited.
  * <p/>
@@ -25,7 +25,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import org.alfresco.demoamp.Demo;
 import org.alfresco.maven.rad.testframework.AlfrescoTestRunner;
 import org.alfresco.maven.rad.testframework.Remote;
 import org.alfresco.service.ServiceRegistry;
@@ -37,10 +36,11 @@ import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
- * This is a test class that does some very light testing to provide some examples
+ * This is an integration test (IT) class that does some very light testing to provide some examples
  * of things that can be done with the AlfrescoTestRunner. It does not use the
  * AlfrescoIntegrationTest.
  * <p/>
@@ -54,7 +54,10 @@ import org.springframework.context.ApplicationContext;
 // not provided. This shows the syntax but simply
 // sets the value to back to the default value.
 @Remote(endpoint = "http://localhost:8080/alfresco")
-public class DemoBasicIntegrationTest {
+public class DemoBasicIT {
+    @Autowired
+    ApplicationContext applicationContext;
+
     @Rule
     public MethodRule testAnnouncer = new MethodRule() {
         @Override
@@ -77,23 +80,21 @@ public class DemoBasicIntegrationTest {
     }
 
     /**
-     * Alfresco provides a singleton called RawServices that provides access to the
-     * main spring context. Given this context we can get beans that allow us to
+     * Given the Spring context we can get beans that allow us to
      * interact with the repository. In your test classes, you might want to put
      * this code in a @Before method and make the context and serviceRegistry
      * class members that can be used from your tests. Otherwise you are likely
      * to repeat this a bunch.
      * <p/>
-     * Alternatively look at DemoComponentIntegrationTest.java, which extends
+     * Alternatively look at DemoComponentIT.java, which extends
      * AlfrescoIntegrationTest. This is a light weight base class that does
      * this step for you.
      */
     @Test
     public void captureSpringContext() {
-        ApplicationContext ctx = RawServices.Instance().getContext();
-        assertThat(ctx, notNullValue());
+        assertThat(applicationContext, notNullValue());
 
-        ServiceRegistry serviceRegistry = (ServiceRegistry) ctx.getBean("ServiceRegistry");
+        ServiceRegistry serviceRegistry = (ServiceRegistry) applicationContext.getBean("ServiceRegistry");
         assertThat(serviceRegistry, notNullValue());
     }
 
@@ -106,10 +107,9 @@ public class DemoBasicIntegrationTest {
      */
     @Test
     public void locateAlfrescoServices() {
-        ApplicationContext ctx = RawServices.Instance().getContext();
-        assertThat(ctx, notNullValue());
+        assertThat(applicationContext, notNullValue());
 
-        ServiceRegistry serviceRegistry = (ServiceRegistry) ctx.getBean("ServiceRegistry");
+        ServiceRegistry serviceRegistry = (ServiceRegistry) applicationContext.getBean("ServiceRegistry");
         assertThat(serviceRegistry, notNullValue());
 
         DictionaryService dictionaryService = serviceRegistry.getDictionaryService();
@@ -125,5 +125,4 @@ public class DemoBasicIntegrationTest {
     public void ignored() {
         fail("This test should have been ignored!");
     }
-
 }

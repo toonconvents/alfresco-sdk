@@ -38,21 +38,21 @@ import org.junit.runners.model.Statement;
 import org.springframework.context.ApplicationContext;
 
 /**
- * This is a test class that does some very light testing to provide some examples
- * of things that can be done with the AlfrescoTestRunner and ZiaAlfrescoTestCase.
- * For a test case that doesn't extend from AlfrescoTestCase you can check out
+ * This is an integration test (IT) class that does some very light testing to provide some examples
+ * of things that can be done with the AlfrescoTestRunner and AlfrescoIntegrationTest.
+ * For a test case that doesn't extend from AlfrescoIntegrationTest you can check out
  * DemoBasicIT.java.
  * <p/>
  * Integration testing framework donated by Zia Consulting
  *
  * @author Bindu Wavell <bindu@ziaconsulting.com>
  */
-public class DemoComponentIntegrationTest extends AlfrescoIntegrationTest {
+public class DemoComponentIT extends AlfrescoIntegrationTest {
     @Rule
     public MethodRule testAnnouncer = new MethodRule() {
         @Override
         public Statement apply(Statement base, FrameworkMethod method, Object target) {
-            System.out.println("Running DemoComponentIntegrationTest IntegrationTest: " + method.getName() + "()");
+            System.out.println("Running DemoComponentIT Integration Test: " + method.getName() + "()");
             return base;
         }
     };
