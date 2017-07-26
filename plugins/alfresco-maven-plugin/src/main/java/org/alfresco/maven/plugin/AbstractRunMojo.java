@@ -1072,6 +1072,10 @@ public abstract class AbstractRunMojo extends AbstractMojo {
 
         if (modules != null && modules.size() > 0) {
             for (ModuleDependency moduleDep : modules) {
+                if (moduleDep.skipInstall()) {
+                    continue;
+                }
+
                 Element el = element(name("artifactItem"),
                         element(name("groupId"), moduleDep.getGroupId()),
                         element(name("artifactId"), moduleDep.getArtifactId()),

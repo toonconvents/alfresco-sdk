@@ -45,6 +45,12 @@ import org.apache.commons.lang.StringUtils;
  *          <artifactId>${project.artifactId}</artifactId>
  *          <version>${project.version}</version>
  *      </moduleDependency>
+ *      <moduleDependency>
+ *          <groupId>some.group.id</groupId>
+ *          <artifactId>someArtifact</artifactId>
+ *          <version>v1.0</version>
+ *          <skipInstall>${skip.someArtifact.install}</skipInstall>
+ *      </moduleDependency>
  *    </platformModules>
  *    }
  * </pre>
@@ -58,6 +64,7 @@ public class ModuleDependency extends MavenDependency {
     public static final String TYPE_AMP = "amp";
 
     private String type = TYPE_JAR;
+    private boolean skipInstall = false; // Default
 
     public ModuleDependency() {
         super();
@@ -67,6 +74,13 @@ public class ModuleDependency extends MavenDependency {
         super(g,a,v);
 
         this.type = t;
+    }
+
+    public ModuleDependency(String g, String a, String v, String t, String s) {
+        super(g,a,v);
+
+        this.type = t;
+        this.skipInstall = Boolean.parseBoolean(s);
     }
 
     public String getType() {
@@ -83,6 +97,10 @@ public class ModuleDependency extends MavenDependency {
 
     public boolean isJar() {
         return StringUtils.equalsIgnoreCase(this.type, TYPE_JAR);
+    }
+
+    public boolean skipInstall() {
+        return skipInstall;
     }
 
     @Override
