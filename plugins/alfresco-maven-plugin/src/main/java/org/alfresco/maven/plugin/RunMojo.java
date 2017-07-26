@@ -62,6 +62,10 @@ public class RunMojo extends AbstractRunMojo {
             buildPlatformWar();
         }
 
+        if (enableTestProperties && enableShare) {
+            copyShareConfigCustom();
+        }
+
         if (enableShare) {
             buildShareWar();
         }

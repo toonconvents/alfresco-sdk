@@ -1017,7 +1017,6 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                 alfrescoGroupId, alfrescoShareWarArtifactId, alfrescoShareVersion);
 
         copyShareLog4jConfig();
-        copyShareConfigCustom();
         copyHotswapAgentProperties(SHARE_WAR_PREFIX_NAME);
 
 
