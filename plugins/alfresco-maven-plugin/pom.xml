@@ -4,11 +4,13 @@
     <artifactId>alfresco-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>Alfresco Maven Plugin</name>
+    <description>A forked version of the plugin v3.0.1 with added features to allow for building wars that do not include any of the test/local run configuration</description>
+    <version>3.0.1.99</version>
 
     <parent>
         <groupId>org.alfresco.maven</groupId>
         <artifactId>alfresco-sdk-aggregator</artifactId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.1</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
